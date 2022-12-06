@@ -9,25 +9,33 @@ public class Solver
         var lines = await File.ReadAllLinesAsync(Path.Combine("Days", "6", "input.txt"));
         foreach (var line in lines)
         {
-            SolveA(line, 4);
-            SolveA(line, 14);
+            SolveA(line);
+            SolveB(line);
         }
     }
 
-    private static void SolveA(string line, int count)
+    private static void SolveA(string line)
+    {
+        Solve(line, 4);
+    }
+    private static void SolveB(string line)
+    {
+        Solve(line, 14);
+    }
+
+    private static void Solve(string line, int count)
     {
         var query = line.ToObservable()
             .Buffer(count, 1)
-            .Where(l => l.Count == count);
-        var marker = string.Empty;
-        using var subscribe = query.Subscribe(i =>
+            .Select(x => new HashSet<char>(x))
+            .Where(x => x.Count == count)
+            .Select(x => string.Join(string.Empty, x))
+            .FirstAsync();
+
+        using var subscribe = query.Subscribe(marker =>
         {
-            if (i.Distinct().Count() == i.Count && marker == string.Empty)
-            {
-                marker = string.Join("", i);
-            }
+            Console.WriteLine(line.IndexOf(marker, StringComparison.OrdinalIgnoreCase) + count);
         });
-        Console.WriteLine(line.IndexOf(marker, StringComparison.OrdinalIgnoreCase) + count);
     }
 }
 
