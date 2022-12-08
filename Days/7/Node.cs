@@ -12,6 +12,11 @@ public class Node
     public int Size { get; }
     public Node? Parent { get; set; }
     public List<Node> Children { get; set; } = new();
+
+    public void AddNode(string path, int size = 0)
+    {
+        Children.Add(new Node(path, size) { Parent = this });
+    }
     public int GetTotalSize()
     {
         return Size + Children.Sum(node => node.GetTotalSize());

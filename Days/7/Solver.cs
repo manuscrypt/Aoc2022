@@ -6,9 +6,10 @@ public class Solver
     {
         var lines = await File.ReadAllLinesAsync(Path.Combine("Days", "7", "input.txt"));
         var fs = new FileSystem();
+        var current = fs.Root;
         foreach (var line in lines)
         {
-            fs.Apply(line);
+            current = fs.Apply(current, line);
         }
         SolveA(fs);
         SolveB(fs);
