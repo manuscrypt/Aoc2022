@@ -3,6 +3,7 @@
 //using Aoc2022.Days._3;
 //using Aoc2022.Days._4;
 //using Aoc2022.Days._5;
-using Aoc2022.Days._6;
+//using Aoc2022.Days._6;
+using Aoc2022.Days._7;
 
 await Solver.Solve();
