@@ -1,4 +1,4 @@
-﻿namespace Aoc2022.Days._4;
+﻿namespace Aoc2022.Days._04;
 public class Solver
 {
     public static async Task Solve()

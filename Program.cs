@@ -1,11 +1,12 @@
-﻿//using Aoc2022.Days._1;
-//using Aoc2022.Days._2;
-//using Aoc2022.Days._3;
-//using Aoc2022.Days._4;
-//using Aoc2022.Days._5;
-//using Aoc2022.Days._6;
-//using Aoc2022.Days._7;
-//using Aoc2022.Days._8;
-using Aoc2022.Days._9;
+﻿//using Aoc2022.Days._01;
+//using Aoc2022.Days._02;
+//using Aoc2022.Days._03;
+//using Aoc2022.Days._04;
+//using Aoc2022.Days._05;
+//using Aoc2022.Days._06;
+//using Aoc2022.Days._07;
+//using Aoc2022.Days._08;
+//using Aoc2022.Days._09;
+using Aoc2022.Days._10;
 
 await Solver.Solve();

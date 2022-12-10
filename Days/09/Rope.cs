@@ -1,4 +1,4 @@
-﻿namespace Aoc2022.Days._9;
+﻿namespace Aoc2022.Days._09;
 
 internal class Rope
 {

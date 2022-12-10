@@ -1,4 +1,4 @@
-﻿namespace Aoc2022.Days._7;
+﻿namespace Aoc2022.Days._07;
 
 public class Node
 {

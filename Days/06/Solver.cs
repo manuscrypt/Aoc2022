@@ -1,6 +1,6 @@
 ﻿using System.Reactive.Linq;
 
-namespace Aoc2022.Days._6;
+namespace Aoc2022.Days._06;
 
 public class Solver
 {

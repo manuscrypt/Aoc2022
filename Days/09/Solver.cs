@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Aoc2022.Days._9;
+namespace Aoc2022.Days._09;
 
 public class Solver
 {

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Aoc2022.Days._5;
+namespace Aoc2022.Days._05;
 
 internal record Move(int Count, int From, int To);
 

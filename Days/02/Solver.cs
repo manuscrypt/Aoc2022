@@ -1,4 +1,4 @@
-﻿namespace Aoc2022.Days._2;
+﻿namespace Aoc2022.Days._02;
 
 public class Solver
 {
