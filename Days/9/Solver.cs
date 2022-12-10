@@ -27,7 +27,7 @@ public class Solver
             }
         }
 
-        Console.WriteLine(rope.TailPositions.Count);
+        Console.WriteLine(rope.TailPositions.Distinct().Count());
         CreateImage(rope, $"rope-{knots}");
     }
 

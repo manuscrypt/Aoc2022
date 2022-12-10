@@ -1,6 +1,6 @@
 ﻿namespace Aoc2022.Days._9;
 
-internal class Pos 
+internal class Pos : IEquatable<Pos>
 {
     public Pos(int x, int y)
     {
@@ -33,8 +33,23 @@ internal class Pos
         return $"{X}/{Y}";
     }
 
-    public bool Is(Pos pos)
+    public bool Equals(Pos? other)
     {
-        return X == pos.X && Y == pos.Y;
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return X == other.X && Y == other.Y;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((Pos)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(X, Y);
     }
 }
