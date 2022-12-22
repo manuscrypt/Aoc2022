@@ -12,6 +12,7 @@
 //using Aoc2022.Days._12;
 //using Aoc2022.Days._13;
 //using Aoc2022.Days._14;
-using Aoc2022.Days._15;
+//using Aoc2022.Days._15;
+using Aoc2022.Days._16;
 
 await Solver.Solve();
