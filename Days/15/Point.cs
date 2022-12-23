@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Aoc2022.Days._15;
+﻿namespace Aoc2022.Days._15;
 
 [DebuggerDisplay("x = {X} y = {Y}")]
 public class Point : IEquatable<Point>, IComparable<Point>
