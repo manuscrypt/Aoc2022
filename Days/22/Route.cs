@@ -8,3 +8,28 @@ internal class Route
         Moves.Add(m);
     }
 }
+
+public abstract class Move
+{
+
+}
+
+internal class Turn : Move
+{
+    public char Dir { get; }
+
+    public Turn(char dir)
+    {
+        Dir = dir;
+    }
+}
+
+internal class Walk : Move
+{
+    public int Amt { get; }
+
+    public Walk(int amt)
+    {
+        Amt = amt;
+    }
+}

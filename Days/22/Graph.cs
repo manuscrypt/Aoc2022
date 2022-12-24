@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using Aoc2022.Days._16;
 
 namespace Aoc2022.Days._22;
 
@@ -60,40 +62,65 @@ internal class Graph
     {
         return Edges.Where(x=>x.Source == f).Select(x=>x.Destination);
     }
-
     private void FindLabel(Face cur, Face neighbor)
     {
         var edgePos = neighbor.Pos - cur.Pos;
+        neighbor.Label = GetLabelInDirection(cur, edgePos);
+    }
+
+    public static Label GetLabelInDirection(Face cur, Direction dir)
+    {
+        var p = dir switch
+        {
+            Direction.Right => new Point(1, 0),
+            Direction.Down => new Point(0, 1),
+            Direction.Left => new Point(-1, 0),
+            Direction.Up => new Point(0, -1),
+            _ => throw new ArgumentOutOfRangeException(nameof(dir), dir, null)
+        };
+        return GetLabelInDirection(cur, p);
+    }
+
+    public static Label GetLabelInDirection(Face cur, Point dir)
+    {
+        var edgePos = dir;
         if (cur.Label == Label.Front)
         {
-            neighbor.Label = edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Bottom : Label.Top)
+            return edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Bottom : Label.Top)
                 : (edgePos.X > 0 ? Label.Right : Label.Left);
         }
-        else if (cur.Label == Label.Top)
+
+        if (cur.Label == Label.Top)
         {
-            neighbor.Label = edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Back : Label.Front)
+            return edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Back : Label.Front)
                 : (edgePos.X > 0 ? Label.Right : Label.Left);
         }
-        else if (cur.Label == Label.Back)
+
+        if (cur.Label == Label.Back)
         {
-            neighbor.Label = edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Bottom : Label.Top)
+            return edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Bottom : Label.Top)
                 : (edgePos.X > 0 ? Label.Left : Label.Right);
         }
-        else if (cur.Label == Label.Bottom)
+
+        if (cur.Label == Label.Bottom)
         {
-            neighbor.Label = edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Back : Label.Front)
+            return edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Back : Label.Front)
                 : (edgePos.X > 0 ? Label.Right : Label.Left);
         }
-        else if (cur.Label == Label.Left)
+
+        if (cur.Label == Label.Left)
         {
-            neighbor.Label = edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Top : Label.Bottom)
+            return edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Top : Label.Bottom)
                 : (edgePos.X > 0 ? Label.Front : Label.Back);
         }
-        else if (cur.Label == Label.Right)
+
+        if (cur.Label == Label.Right)
         {
-            neighbor.Label = edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Top : Label.Bottom)
+            return edgePos.X == 0 ? (edgePos.Y > 0 ? Label.Top : Label.Bottom)
                 : (edgePos.X > 0 ? Label.Back : Label.Front);
         }
+
+        throw new ArgumentException(nameof(cur));
     }
 
     public (Face newFace, Cell newCell, Direction newDirection) GetFace(Face startFace, Direction direction, int x, int y)
@@ -121,6 +148,57 @@ internal class Graph
             return (newFace, cell, direction);
         }
 
-        return (startFace, null, direction);
+        var label = GetLabelInDirection(startFace, direction);
+        newFace = Faces.Single(f => f.Label == label);
+
+        //var newDirection = GetDirection(startFace, newFace, direction);
+
+        return (newFace, null, direction);
     }
+
+
+    private int ShortestDistance(Face start, Face end)
+    {
+        // queue for storing the nodes to visit
+        Queue<Face> queue = new Queue<Face>();
+
+        // dictionary to store the distances from the start node to each node
+        Dictionary<Face, int> distances = new Dictionary<Face, int>();
+
+        // initialize the distances and add the starting node to the queue
+        foreach (var face in Faces)
+        {
+            distances[face] = int.MaxValue;
+        }
+        distances[start] = 0;
+        queue.Enqueue(start);
+
+        // while there are nodes to visit
+        while (queue.Count > 0)
+        {
+            // get the next node in the queue
+            var current = queue.Dequeue();
+
+            // if we reached the end node, return the distance
+            if (current == end)
+            {
+                return distances[end];
+            }
+
+            // visit the neighbors
+            foreach (var neighbor in GetNeighbors(current))
+            {
+                if (distances[neighbor] == int.MaxValue)
+                {
+                    // update the distance of the neighbor and add it to the queue
+                    distances[neighbor] = distances[current] + 1;
+                    queue.Enqueue(neighbor);
+                }
+            }
+        }
+
+        // if the end node was not reached, return -1
+        return -1;
+    }
+
 }

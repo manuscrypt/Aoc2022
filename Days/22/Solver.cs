@@ -16,7 +16,7 @@ public class Solver
         var graph = new Graph(faces,4);
         graph.LabelFaces();
         //CreateMermaid(graph, "cube.md");
-        //SolveB(graph, chars, route);
+        SolveB(graph, chars, route);
         //DebugGrid(grid);
     }
 
