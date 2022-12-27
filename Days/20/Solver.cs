@@ -9,7 +9,7 @@ public class Solver
         var lines = await File.ReadAllLinesAsync(Path.Combine("Days", "20", $"{input}.txt"));
         var nums = lines.Select((x,i) => (i,long.Parse(x))).ToList();
 
-        SolveA(nums);
+        //SolveA(nums);
         //SolveB(nums);
     }
 
