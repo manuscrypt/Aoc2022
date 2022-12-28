@@ -1,6 +1,4 @@
-﻿using System.Resources;
-
-namespace Aoc2022.Days._19;
+﻿namespace Aoc2022.Days._19;
 
 public class Dfs
 {
