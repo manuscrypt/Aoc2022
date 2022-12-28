@@ -11,7 +11,6 @@ public class Map
         Direction.North, Direction.South, Direction.West, Direction.East
     };
 
-
     public void Rotate()
     {
         var first = CurrentDirectionOrder.First();
@@ -19,62 +18,54 @@ public class Map
         CurrentDirectionOrder.Add(first);
     }
 
-    private readonly Dictionary<Direction, List<Point>> _deltas = new()
-    {
-        {
-            Direction.North, new List<Point>
-            {
-                new Point(0, -1),
-                new Point(1, -1),
-                new Point(-1, -1)
-            }
-        },
-
-        {
-            Direction.South, new List<Point>
-            {
-                new Point(0, 1),
-                new Point(1, 1),
-                new Point(-1, 1)
-            }
-        },
-        {
-            Direction.West, new List<Point>
-            {
-                new Point(-1, 0),
-                new Point(-1, -1),
-                new Point(-1, 1)
-            }
-        },
-        {
-            Direction.East, new List<Point>
-            {
-                new Point(1, 0),
-                new Point(1, -1),
-                new Point(1, 1)
-            }
-        }
-    };
     public void AddElf(Point point)
     {
-        Elves.Add(point,new Elf(point, this));
+        Elves.Add(point, new Elf(point, this));
     }
-    public void MoveElf(Elf kvKey, Point proposal)
+
+    public bool Tick()
     {
-        if (!Elves.Remove(kvKey.Pos))
+        var proposals = new Dictionary<Elf, Point>();
+        foreach (var elf in Elves.Values)
         {
-            throw new ArgumentException("found no elf at pos: " + kvKey.Pos);
+            var proposal = elf.ProposePosition();
+            if (proposal != null)
+            {
+                proposals.Add(elf, proposal);
+            }
         }
-        kvKey.Move(proposal);
-        Elves.Add(kvKey.Pos, kvKey);
+        if (!proposals.Any())
+        {
+            return false;
+        }
+        //each elf moves to the proposed position, if they were the only elf to propose it
+        var finalProps = proposals
+            .GroupBy(x => x.Value)
+            .Where(x => x.Count() == 1)
+            .ToDictionary(x => x.Key, x => x.First().Key);
+        foreach (var kv in finalProps)
+        {
+            MoveElf(kv.Value, kv.Key);
+        }
+        //Finally, at the end of the round, the first direction the Elves considered is moved to the end of the list of directions.
+        Rotate();
+
+        return true;
+    }
+    public void MoveElf(Elf elf, Point proposal)
+    {
+        if (!Elves.Remove(elf.Pos))
+        {
+            throw new ArgumentException("found no elf at pos: " + elf.Pos);
+        }
+        elf.Move(proposal);
+        Elves.Add(elf.Pos, elf);
     }
 
     public IEnumerable<Elf> GetInDirection(Direction dir, Point pos)
     {
-        var deltas = _deltas[dir];
-        foreach (var delta in deltas)
+        foreach (var newPos in dir.GetDeltas().Select(delta => pos + delta))
         {
-            var newPos = pos + delta;
             if (Elves.TryGetValue(newPos, out var elf))
             {
                 yield return elf;
@@ -84,44 +75,52 @@ public class Map
 
     public long CountEmptyTiles()
     {
-        var minX = Elves.Keys.Min(e => e.X);
-        var maxX = Elves.Keys.Max(e => e.X);
-        var minY = Elves.Keys.Min(e => e.Y);
-        var maxY = Elves.Keys.Max(e => e.Y);
         var count = 0;
-        for (var i = minX; i <= maxX; i++)
+        MapMap(pos =>
         {
-            for (long j = minY; j <= maxY; j++)
+            if (!Elves.ContainsKey(pos))
             {
-                var p = new Point(i, j);
-                if (!Elves.ContainsKey(p))
-                {
-                    count++;
-                }
+                count++;
             }
-        }
+        });
         return count;
     }
 
     public override string ToString()
     {
         var sb = new StringBuilder();
-        var minX = Elves.Keys.Min(e => e.X);
-        var maxX = Elves.Keys.Max(e => e.X);
-        var minY = Elves.Keys.Min(e => e.Y);
-        var maxY = Elves.Keys.Max(e => e.Y);
-        for (var i = minY; i <= maxY; i++)
+        var (min, max) = GetExtent();
+        for (var i = min.Y; i <= max.Y; i++)
         {
-            for (long j = minX; j <= maxX; j++)
+            for (var j = min.X; j <= max.X; j++)
             {
                 var p = new Point(j, i);
                 sb.Append(!Elves.ContainsKey(p) ? "." : "#");
             }
-
             sb.AppendLine();
         }
-
         return sb.ToString();
     }
 
+    public void MapMap(Action<Point> action)
+    {
+        var (min, max) = GetExtent();
+
+        for (var i = min.X; i <= max.X; i++)
+        {
+            for (var j = min.Y; j <= max.Y; j++)
+            {
+                action(new Point(i, j));
+            }
+        }
+    }
+
+    private (Point, Point) GetExtent()
+    {
+        var minX = Elves.Keys.Min(e => e.X);
+        var maxX = Elves.Keys.Max(e => e.X);
+        var minY = Elves.Keys.Min(e => e.Y);
+        var maxY = Elves.Keys.Max(e => e.Y);
+        return (new Point(minX, minY), new Point(maxX, maxY));
+    }
 }
